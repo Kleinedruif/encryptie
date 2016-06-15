@@ -1,0 +1,67 @@
+<html>  
+    <script src="iets.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src='https://code.jquery.com/jquery-2.2.2.min.js'></script>
+	 <!-- Latest compiled and minified CSS -->
+	<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' integrity='sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7' crossorigin='anonymous'>
+	<div class='col-sm-3'>
+		<form id="inputform">
+			Gebruikersnaam:<br>
+			<input type="text" id="inputName" name="inputName"><br>
+			Wachtwoord:<br>
+			<input type="text" id="inputPass" name="inputPass">
+		</form>
+		<textarea form="inputform" rows="5" id="inputField" name="inputField" placeholder="Bericht"></textarea><br><br>
+		<button id="button1">Versleutel</button>
+	</div>
+	<div class='col-sm-3'>
+		<form id="outputform">
+			Gebruikersnaam:<br>
+			<input type="text" id="outputName" name="outputName"><br>
+			Wachtwoord:<br>
+			<input type="text" id="outputPass" name="outputPass">
+		</form>
+		<textarea form="inputform" rows="5" id="outputField" name="outputField" placeholder="Versleuteld bericht"></textarea><br><br>
+		<button id="button2">Ontsleutel</button>
+	</div>
+ 
+    <script type="text/javascript">
+		var data = "";
+	 
+		 $("#button1").on('click', function(){
+			triplesec.encrypt ({
+				data:          new triplesec.Buffer($("#inputField").val()),
+				key:           new triplesec.Buffer($("#inputName").val() + $("#inputPass").val()),
+				progress_hook: function (obj) { /* ... */ }
+			}, function(err, buff) {
+				if (! err) {
+					var ciphertext = buff.toString('hex');
+					$("#inputField").val("");
+					$("#inputName").val("");
+					$("#inputPass").val("");
+					$("#outputField").val(ciphertext);
+				} else {
+					alert(err);
+				}
+
+			});
+		});   
+		
+		$("#button2").on('click', function(){
+		 triplesec.decrypt ({
+				data:          new triplesec.Buffer($("#outputField").val(), "hex"),
+				key:           new triplesec.Buffer($("#outputName").val() + $("#outputPass").val()),
+				progress_hook: function (obj) { /* ... */ }
+			}, function (err, buff) {
+				if (! err) {
+					$("#inputField").val(buff.toString());
+					$("#outputField").val("");
+					$("#outputPass").val("");
+					$("#outputName").val("");
+				} else {
+					alert(err);
+				}
+			});
+		}); 
+	</script>	 
+</html>
